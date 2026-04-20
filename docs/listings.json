@@ -1,15 +1,11 @@
 [
   {
-    "listing": "/posts.html",
+    "listing": "/portfolio.html",
     "items": [
-      "/posts/hw1/index.html"
-    ]
-  },
-  {
-    "listing": "/projects.html",
-    "items": [
-      "/projects/project1/index.html",
-      "/projects/project2/index.html"
+      "/posts/intuit/index.html",
+      "/posts/hw1/index.html",
+      "/projects/creative-gaming-uplift/index.html",
+      "/posts/tuango/index.html"
     ]
   }
 ]

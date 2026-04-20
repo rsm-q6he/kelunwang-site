@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kelun Wang">
+<meta name="dcterms.date" content="2026-04-19">
+<meta name="description" content="A marketing analytics case study that uses treatment-control data to rank persuadable users, compare uplift against propensity targeting, and turn model scores into campaign profit.">
+
+<title>Who Should See the Ad? Uplift Modeling at Creative Gaming – Kelun Wang</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Kelun Wang</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../resume.html"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../portfolio.html"> 
+<span class="menu-text">Portfolio</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-this-case-was-different" id="toc-why-this-case-was-different" class="nav-link active" data-scroll-target="#why-this-case-was-different">Why This Case Was Different</a></li>
+  <li><a href="#what-i-wanted-the-model-to-do" id="toc-what-i-wanted-the-model-to-do" class="nav-link" data-scroll-target="#what-i-wanted-the-model-to-do">What I Wanted The Model To Do</a></li>
+  <li><a href="#the-experiment-inside-the-data" id="toc-the-experiment-inside-the-data" class="nav-link" data-scroll-target="#the-experiment-inside-the-data">The Experiment Inside The Data</a></li>
+  <li><a href="#where-uplift-beat-propensity" id="toc-where-uplift-beat-propensity" class="nav-link" data-scroll-target="#where-uplift-beat-propensity">Where Uplift Beat Propensity</a></li>
+  <li><a href="#the-more-important-question-was-how-deep-should-we-go" id="toc-the-more-important-question-was-how-deep-should-we-go" class="nav-link" data-scroll-target="#the-more-important-question-was-how-deep-should-we-go">The More Important Question Was “How Deep Should We Go?”</a></li>
+  <li><a href="#what-the-tree-model-added" id="toc-what-the-tree-model-added" class="nav-link" data-scroll-target="#what-the-tree-model-added">What The Tree Model Added</a></li>
+  <li><a href="#what-a-persuadable-player-looked-like" id="toc-what-a-persuadable-player-looked-like" class="nav-link" data-scroll-target="#what-a-persuadable-player-looked-like">What A Persuadable Player Looked Like</a></li>
+  <li><a href="#what-i-would-tell-a-growth-team" id="toc-what-i-would-tell-a-growth-team" class="nav-link" data-scroll-target="#what-i-would-tell-a-growth-team">What I Would Tell A Growth Team</a></li>
+  <li><a href="#why-i-kept-this-in-my-portfolio" id="toc-why-i-kept-this-in-my-portfolio" class="nav-link" data-scroll-target="#why-i-kept-this-in-my-portfolio">Why I Kept This In My Portfolio</a></li>
+  <li><a href="#technical-footnote" id="toc-technical-footnote" class="nav-link" data-scroll-target="#technical-footnote">Technical Footnote</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Who Should See the Ad? Uplift Modeling at Creative Gaming</h1>
+<p class="subtitle lead">A causal targeting case for the Zalon campaign</p>
+</div>
+
+<div>
+  <div class="description">
+    A marketing analytics case study that uses treatment-control data to rank persuadable users, compare uplift against propensity targeting, and turn model scores into campaign profit.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kelun Wang </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 19, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Creative Gaming was one of the most useful cases in my MSBA coursework because it forced me to answer a better question than the usual “who is likely to buy?” In this campaign, the real goal was to figure out <strong>who is likely to buy because of the ad</strong>.</p>
+<p>That difference sounds subtle, but it changes the entire modeling strategy. A standard response model can easily overvalue users who were already going to convert on their own. An uplift model tries to isolate the incremental effect of outreach and spend money only where the ad actually moves behavior.</p>
+<section id="why-this-case-was-different" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-case-was-different">Why This Case Was Different</h2>
+<p>The business setup was centered on a campaign for <strong>Zalon</strong>, a paid in-game offer. Haruki, the decision-maker in the case, wanted to choose whom to target using experimental evidence rather than intuition.</p>
+<p>The assignment provided a rare and valuable structure:</p>
+<ul>
+<li>a <code>30,000</code>-user organic control group that did <strong>not</strong> receive an ad</li>
+<li>a <code>30,000</code>-user randomized ad group that <strong>did</strong> receive an ad</li>
+<li>a broader <code>150,000</code>-user treatment file, from which <code>120,000</code> users remained as the deployable audience after holding out a random <code>30,000</code></li>
+</ul>
+<p>That design made causal targeting possible. Instead of guessing treatment effect from observational data, I could compare outcomes across treated and untreated users and learn which player profiles were genuinely persuadable.</p>
+</section>
+<section id="what-i-wanted-the-model-to-do" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-wanted-the-model-to-do">What I Wanted The Model To Do</h2>
+<p>I framed the project around a ranking problem:</p>
+<ol type="1">
+<li>Predict the probability of conversion under treatment.</li>
+<li>Predict the probability of conversion under no treatment.</li>
+<li>Take the difference between those two predictions.</li>
+<li>Rank users by that incremental gap rather than by raw purchase propensity.</li>
+</ol>
+<p>In code, the core scoring rule was simple:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>test_pd[<span class="st">"uplift_score"</span>] <span class="op">=</span> (</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    test_pd[<span class="st">"pred_treatment"</span>] <span class="op">-</span> test_pd[<span class="st">"pred_control"</span>]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>That one subtraction is the heart of the case. It turns a standard response model into a decision tool for ad allocation.</p>
+<p>To estimate those two counterfactual probabilities, I trained separate response models on treated and untreated users and scored the holdout sample with both:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>clf_treatment <span class="op">=</span> rsm.model.logistic(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>{<span class="st">"treat"</span>: train_df.<span class="bu">filter</span>(pl.col(<span class="st">"ad"</span>) <span class="op">==</span> <span class="dv">1</span>)},</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    rvar<span class="op">=</span><span class="st">"converted"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    lev<span class="op">=</span><span class="st">"yes"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    evar<span class="op">=</span>evar,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>clf_control <span class="op">=</span> rsm.model.logistic(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>{<span class="st">"control"</span>: train_df.<span class="bu">filter</span>(pl.col(<span class="st">"ad"</span>) <span class="op">==</span> <span class="dv">0</span>)},</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    rvar<span class="op">=</span><span class="st">"converted"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    lev<span class="op">=</span><span class="st">"yes"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    evar<span class="op">=</span>evar,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="the-experiment-inside-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-experiment-inside-the-data">The Experiment Inside The Data</h2>
+<p>To create an RCT-style modeling sample, I stacked the organic control users and randomized ad users into one dataset and carried a binary <code>ad</code> flag through the workflow.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cg_ad_random <span class="op">=</span> cg_ad_random.with_columns(pl.lit(<span class="dv">1</span>).alias(<span class="st">"ad"</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cg_organic_control <span class="op">=</span> cg_organic_control.with_columns(pl.lit(<span class="dv">0</span>).alias(<span class="st">"ad"</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>cg_rct_stacked <span class="op">=</span> pl.concat([cg_organic_control, cg_ad_random], how<span class="op">=</span><span class="st">"vertical"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>I then created a stratified train/test split so that treatment status and conversion rates stayed balanced across the modeling pipeline. That step matters more than it looks. If the split distorts treatment/control balance, uplift estimates become noisy very quickly.</p>
+</section>
+<section id="where-uplift-beat-propensity" class="level2">
+<h2 class="anchored" data-anchor-id="where-uplift-beat-propensity">Where Uplift Beat Propensity</h2>
+<p>The most convincing first result came from comparing <strong>logistic uplift targeting</strong> with <strong>logistic propensity targeting</strong> across the ranked list of users.</p>
+<p>The red line below is the naive alternative: rank users by the predicted probability of purchase <em>given</em> an ad.<br>
+The teal line is the better causal alternative: rank users by the difference between predicted purchase probability <em>with</em> an ad and predicted purchase probability <em>without</em> an ad.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/cg_lr_uplift_vs_propensity.png" class="img-fluid figure-img"></p>
+<figcaption>Cumulative incremental uplift rises faster under uplift-based ranking than under plain propensity ranking, especially in the most valuable part of the customer list.</figcaption>
+</figure>
+</div>
+<p>What I like about this chart is that it shows the business mistake very clearly. The propensity model still finds responsive users, but the uplift model does a better job concentrating truly persuadable users near the top of the list. That is exactly where paid acquisition and CRM teams make money.</p>
+<p>At a fixed rollout depth of <code>25%</code> of the <code>120,000</code>-user deployment population, the notebook estimated:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model family</th>
+<th>Ranking rule</th>
+<th style="text-align: right;">Targeted share</th>
+<th style="text-align: right;">Customers targeted</th>
+<th style="text-align: right;">Net incremental profit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Logistic Regression</td>
+<td>Propensity</td>
+<td style="text-align: right;">25%</td>
+<td style="text-align: right;">30,000</td>
+<td style="text-align: right;">$19,266</td>
+</tr>
+<tr class="even">
+<td>Logistic Regression</td>
+<td>Uplift</td>
+<td style="text-align: right;">25%</td>
+<td style="text-align: right;">30,000</td>
+<td style="text-align: right;">$22,727</td>
+</tr>
+</tbody>
+</table>
+<p>So even before tuning the optimal cutoff, uplift modeling generated about <strong>$3,461</strong> more incremental profit than the comparable propensity rule.</p>
+</section>
+<section id="the-more-important-question-was-how-deep-should-we-go" class="level2">
+<h2 class="anchored" data-anchor-id="the-more-important-question-was-how-deep-should-we-go">The More Important Question Was “How Deep Should We Go?”</h2>
+<p>The notebook became much more interesting once I stopped treating targeting depth as fixed.</p>
+<p>Instead of assuming we should always target 25% of users, I calculated cumulative profit as:</p>
+<p><span class="math display">\[
+\text{Incremental profit} =
+\text{incremental responses} \times \text{revenue per purchase}
+- \text{customers targeted} \times \text{cost per ad}
+\]</span></p>
+<p>Using the campaign assumptions from the case:</p>
+<ul>
+<li>revenue per purchase: <code>$14.99</code></li>
+<li>cost per ad: <code>$1.50</code></li>
+</ul>
+<p>I searched for the targeting depth that maximized cumulative incremental profit.</p>
+<p>This is where the uplift framing became much more valuable. The best rollout rule did <strong>not</strong> target the same share of customers as the best propensity rule.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/cg_profit_summary.png" class="img-fluid figure-img"></p>
+<figcaption>Allowing each strategy to choose its own best targeting depth makes the business advantage of uplift modeling even clearer.</figcaption>
+</figure>
+</div>
+<p>The optimal rules from the notebook were:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th style="text-align: right;">Best targeting depth</th>
+<th style="text-align: right;">Net incremental profit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Logistic Propensity</td>
+<td style="text-align: right;">15%</td>
+<td style="text-align: right;">$32,213</td>
+</tr>
+<tr class="even">
+<td>Logistic Uplift</td>
+<td style="text-align: right;">25%</td>
+<td style="text-align: right;">$45,908</td>
+</tr>
+<tr class="odd">
+<td>XGBoost Propensity</td>
+<td style="text-align: right;">20%</td>
+<td style="text-align: right;">$41,414</td>
+</tr>
+<tr class="even">
+<td>XGBoost Uplift</td>
+<td style="text-align: right;">30%</td>
+<td style="text-align: right;">$59,161</td>
+</tr>
+</tbody>
+</table>
+<p>That table is the real punchline of the case. The uplift model did not just reorder the same audience a little better. It changed the recommended budget allocation and the optimal size of the campaign.</p>
+</section>
+<section id="what-the-tree-model-added" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-tree-model-added">What The Tree Model Added</h2>
+<p>I also reviewed non-linear models in the notebook, especially XGBoost. The XGBoost uplift curve was stronger than the logistic version and stayed elevated longer before tapering off.</p>
+<p>For the tree-based version, the core idea stayed the same even though the model class changed: estimate treatment and control response separately, then rank players by the gap.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tab_uplift_xgb <span class="op">=</span> rsm.model.uplift_tab(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    test_df_xgb,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"converted"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"yes"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"uplift_score_xgb"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ad"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    qnt<span class="op">=</span><span class="dv">20</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/cg_xgb_uplift_curve.png" class="img-fluid figure-img"></p>
+<figcaption>The XGBoost uplift ranking keeps incremental lift high deeper into the file, which is why its optimal campaign size ends up larger than the logistic uplift solution.</figcaption>
+</figure>
+</div>
+<p>This mattered operationally. Under the logistic uplift model, the best audience size was <code>25%</code>. Under XGBoost uplift, the best audience size moved to <code>30%</code>, and the projected profit improved further.</p>
+<p>That is a good example of when I would use interpretable models for diagnosis but still be willing to deploy a more flexible ranking model if the profit evidence is compelling.</p>
+</section>
+<section id="what-a-persuadable-player-looked-like" class="level2">
+<h2 class="anchored" data-anchor-id="what-a-persuadable-player-looked-like">What A Persuadable Player Looked Like</h2>
+<p>One of the useful side analyses in the notebook scanned gameplay variables by average treatment-control gap. The strongest signals were not generic demographics. They were indicators of in-game engagement and social play.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/cg_persuadability_features.png" class="img-fluid figure-img"></p>
+<figcaption>The strongest persuadability signals come from gameplay intensity, social engagement, and prior ad interaction rather than from broad customer labels.</figcaption>
+</figure>
+</div>
+<p>The most revealing features were:</p>
+<ul>
+<li><code>NumSpaceHeroBadges</code></li>
+<li><code>NumAdsClicked</code></li>
+<li><code>NumFriends</code></li>
+<li><code>TimesLostSpaceship</code></li>
+<li><code>TimesCaptain</code></li>
+</ul>
+<p>That pattern tells a compelling product story. The users most likely to be influenced by an ad were not necessarily the users with the highest raw purchase probability. They were users with evidence of engagement, exploration, and responsiveness inside the game environment.</p>
+<p>To me, that is a much stronger business insight than simply saying “high scorers buy more.” It suggests that ad effectiveness depended on where the player was in the gameplay loop and how socially embedded they already were.</p>
+</section>
+<section id="what-i-would-tell-a-growth-team" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-would-tell-a-growth-team">What I Would Tell A Growth Team</h2>
+<p>If I were presenting this case to a marketing or growth lead, my recommendation would be:</p>
+<ul>
+<li>do not rank users only by conversion propensity</li>
+<li>treat incremental lift as the primary targeting signal</li>
+<li>tune the audience size jointly with the model, because the best cutoff is part of the strategy</li>
+<li>use the uplift model to find persuadable users and avoid spending on sure-things or lost-causes</li>
+</ul>
+<p>That recommendation is what makes this project portfolio-worthy for me. It moves beyond model fitting and into resource allocation.</p>
+</section>
+<section id="why-i-kept-this-in-my-portfolio" class="level2">
+<h2 class="anchored" data-anchor-id="why-i-kept-this-in-my-portfolio">Why I Kept This In My Portfolio</h2>
+<p>This case shows several things I want employers to see:</p>
+<ul>
+<li>I can work from randomized treatment-control data rather than only observational data</li>
+<li>I understand the difference between prediction and causation in targeting problems</li>
+<li>I can connect model outputs to rollout depth, cost assumptions, and profit</li>
+<li>I can turn a classroom notebook into a business-facing recommendation</li>
+</ul>
+<p>It is one of the clearest examples in my coursework of using analytics to answer not just “who will respond?” but “where does the ad create value?”</p>
+</section>
+<section id="technical-footnote" class="level2">
+<h2 class="anchored" data-anchor-id="technical-footnote">Technical Footnote</h2>
+<ul>
+<li>Tools: <code>Python</code>, <code>Polars</code>, <code>pyrsm</code>, <code>plotnine</code>, <code>scikit-learn</code></li>
+<li>Methods: uplift modeling, treatment/control scoring, cumulative profit optimization, model comparison</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Portfolio and analytics writing built with Quarto</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

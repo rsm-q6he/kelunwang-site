@@ -12,12 +12,10 @@ website:
         text: About
       - href: resume.qmd
         text: Resume
-      - href: posts.qmd
-        text: Posts
-      - href: projects.qmd
-        text: Projects
+      - href: portfolio.qmd
+        text: Portfolio
   page-footer:
-    center: "MGTA 495 portfolio built with Quarto"
+    center: "Portfolio and analytics writing built with Quarto"
 
 format:
   html:
@@ -26,4 +24,3 @@ format:
       - brand
     css: styles.css
     toc: true
-

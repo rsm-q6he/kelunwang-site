@@ -59,6 +59,178 @@ main.content {
   padding: 3rem 1.25rem 5rem 1.25rem;
 }
 
+.page-layout-article main.content {
+  max-width: 760px;
+}
+
+#quarto-margin-sidebar .toc-active {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(31, 42, 68, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(31, 42, 68, 0.08);
+  padding: 1rem 1rem 0.85rem 1rem;
+}
+
+#quarto-margin-sidebar #toc-title {
+  font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--brand-soft);
+  margin-bottom: 0.7rem;
+}
+
+#quarto-margin-sidebar .nav-link {
+  padding-top: 0.28rem;
+  padding-bottom: 0.28rem;
+  overflow-wrap: anywhere;
+  color: var(--brand-copy);
+  border-left: 2px solid transparent;
+  padding-left: 0.85rem;
+}
+
+#quarto-margin-sidebar .nav-link:hover {
+  color: var(--brand-ink);
+}
+
+#quarto-margin-sidebar .nav-link.active {
+  color: var(--brand-accent);
+  border-left-color: var(--brand-accent);
+  font-weight: 700;
+}
+
+.page-layout-article .quarto-title-block {
+  max-width: 760px;
+  margin-bottom: 2.25rem;
+}
+
+.page-layout-article .quarto-title-block .description,
+.page-layout-article .quarto-title-meta {
+  color: var(--brand-copy);
+}
+
+.page-layout-article .title {
+  font-size: clamp(2.8rem, 6vw, 4.9rem);
+  line-height: 1.02;
+  margin-bottom: 0.45rem;
+}
+
+.page-layout-article .subtitle {
+  font-size: 1.25rem;
+  color: var(--brand-soft);
+  margin-top: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.page-layout-article .description {
+  font-size: 1.12rem;
+  line-height: 1.7;
+  max-width: 42rem;
+  margin-bottom: 1.25rem;
+}
+
+.page-layout-article .quarto-title-meta {
+  display: flex;
+  gap: 1.75rem;
+  align-items: center;
+  margin-top: 1.25rem;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.page-layout-article .quarto-title-meta > div {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.page-layout-article .quarto-title-meta-heading {
+  display: none;
+}
+
+.page-layout-article .quarto-title-meta-contents p {
+  margin: 0;
+  color: var(--brand-copy);
+  font-weight: 600;
+}
+
+.page-layout-article h2 {
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  color: var(--brand-ink);
+}
+
+.page-layout-article h3 {
+  font-size: clamp(1.35rem, 2.1vw, 1.7rem);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--brand-ink);
+}
+
+.page-layout-article p,
+.page-layout-article li {
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.page-layout-article .content img,
+.page-layout-article .content .img-fluid,
+.page-layout-article .quarto-figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 18px 18px 0 0;
+}
+
+.page-layout-article .quarto-figure,
+.page-layout-article figure,
+.page-layout-article .content .cell,
+.page-layout-article div.sourceCode,
+.page-layout-article pre {
+  max-width: 100%;
+}
+
+.page-layout-article .quarto-figure,
+.page-layout-article figure {
+  margin-left: 0;
+  margin-right: 0;
+  border-radius: 18px;
+  overflow: visible;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(31, 42, 68, 0.08);
+  box-shadow: var(--shadow-soft);
+}
+
+.page-layout-article .content .cell,
+.page-layout-article div.sourceCode,
+.page-layout-article pre {
+  overflow-x: auto;
+}
+
+.page-layout-article figcaption {
+  padding: 0.85rem 1rem 1rem 1rem;
+  color: var(--brand-copy);
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.page-layout-article div.sourceCode,
+.page-layout-article pre.sourceCode {
+  border-radius: 18px;
+  background: rgba(246, 248, 252, 0.95);
+  border: 1px solid rgba(31, 42, 68, 0.08);
+}
+
+.page-layout-article mjx-container {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .quarto-title-block {
   margin-bottom: 1.5rem;
 }
@@ -256,8 +428,7 @@ main.content li {
 }
 
 .quarto-grid-item.card,
-.content .cell,
-.content .quarto-figure {
+.content .cell {
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-soft);
@@ -370,9 +541,27 @@ details.code-fold[open] summary {
   }
 }
 
+@media (min-width: 1200px) {
+  .page-layout-article #quarto-content {
+    column-gap: 2.5rem;
+  }
+
+  .page-layout-article main.content {
+    padding-right: 2rem;
+  }
+
+  .page-layout-article #quarto-margin-sidebar {
+    width: 240px;
+  }
+}
+
 @media (max-width: 768px) {
   main.content {
     padding: 2rem 1rem 4rem 1rem;
+  }
+
+  .page-layout-article main.content {
+    max-width: 100%;
   }
 
   .quarto-about-jolla {

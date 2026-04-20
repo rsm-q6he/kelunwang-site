@@ -1,0 +1,15 @@
+---
+title: "Portfolio"
+listing:
+  contents:
+    - posts
+    - projects
+  type: default
+  sort: "date desc"
+  categories: false
+  fields: [title, subtitle, description, date]
+---
+
+::: {.page-intro}
+A combined portfolio of analytics writing, case studies, and modeling projects. These entries started as coursework, but each one is being revised into a clearer business-facing showcase with visuals, results, and interpretation.
+:::

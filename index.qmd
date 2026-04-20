@@ -25,8 +25,7 @@ I see myself as a translator between strategy and code. Whether optimizing algor
 
 ## What You'll Find Here
 
-- `Posts` collects polished write-ups like my A/B testing article on frequentist statistics.
-- `Projects` highlights coursework, experiments, and ongoing website development.
+- `Portfolio` collects my strongest analytics case studies, technical write-ups, and modeling projects in one place.
 - `Resume` keeps my academic background and professional experience in one place.
 
 ## Why This Site Exists

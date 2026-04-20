@@ -1,31 +1,178 @@
 [
   {
-    "objectID": "posts.html",
-    "href": "posts.html",
-    "title": "Posts",
+    "objectID": "portfolio.html",
+    "href": "portfolio.html",
+    "title": "Portfolio",
     "section": "",
-    "text": "Course writing, statistical walkthroughs, and polished analysis posts from MGTA 495. Each piece is meant to read like a finished article, not just a homework submission.\n\n\n\n\n\n\n\n\n\n\nA/B Testing a Call to Action\n\n\nSimulating Key Ideas from Classical Frequentist Statistics\n\n\nA simulation-based walkthrough of A/B testing, uncertainty, and hypothesis testing using a simple homepage CTA experiment.\n\n\n\n\n\nApr 15, 2026\n\n\n\n\n\nNo matching items"
+    "text": "A combined portfolio of analytics writing, case studies, and modeling projects. These entries started as coursework, but each one is being revised into a clearer business-facing showcase with visuals, results, and interpretation.\n\n\n\n\n\n\n\n\n\n\nModeling QuickBooks Upgrade Response at Intuit\n\n\nChoosing whom to mail in a wave-2 upsell campaign\n\n\nA customer targeting case study that compares logistic regression and neural networks to optimize a wave-2 upgrade mailing for Intuit QuickBooks.\n\n\n\n\n\nApr 19, 2026\n\n\n\n\n\n\n\nA/B Testing a Call to Action\n\n\nSimulating Key Ideas from Classical Frequentist Statistics\n\n\nA simulation-based walkthrough of A/B testing, uncertainty, and hypothesis testing using a simple homepage CTA experiment.\n\n\n\n\n\nApr 19, 2026\n\n\n\n\n\n\n\nWho Should See the Ad? Uplift Modeling at Creative Gaming\n\n\nA causal targeting case for the Zalon campaign\n\n\nA marketing analytics case study that uses treatment-control data to rank persuadable users, compare uplift against propensity targeting, and turn model scores into campaign profit.\n\n\n\n\n\nApr 19, 2026\n\n\n\n\n\n\n\nTargeting Mobile App Messages at Tuango\n\n\nA profit-based targeting case for mobile deal offers\n\n\nA case study on customer targeting for a mobile karaoke offer, combining response modeling, campaign economics, and rollout evaluation to improve profit.\n\n\n\n\n\nApr 18, 2026\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "projects.html",
-    "href": "projects.html",
-    "title": "Projects",
+    "objectID": "projects/creative-gaming-uplift/index.html",
+    "href": "projects/creative-gaming-uplift/index.html",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
     "section": "",
-    "text": "A small portfolio of class exercises and website experiments. Some entries are finished analyses, while others track work that is still in progress.\n\n\n\n\n\n\n\n\n\n\n\n\n\nAnalysis of Cars\n\n\nA short exploratory analysis of the relationship between fuel efficiency and engine displacement in the mtcars dataset.\n\n\n\nKelun Wang\n\n\nApr 15, 2026\n\n\n\n\n\n\n\n\n\n\n\nPortfolio Site Refresh\n\n\nAn in-progress project focused on reorganizing this Quarto site, improving navigation, and building a cleaner portfolio experience.\n\n\n\nKelun Wang\n\n\nApr 15, 2026\n\n\n\n\n\n\nNo matching items"
+    "text": "Creative Gaming was one of the most useful cases in my MSBA coursework because it forced me to answer a better question than the usual “who is likely to buy?” In this campaign, the real goal was to figure out who is likely to buy because of the ad.\nThat difference sounds subtle, but it changes the entire modeling strategy. A standard response model can easily overvalue users who were already going to convert on their own. An uplift model tries to isolate the incremental effect of outreach and spend money only where the ad actually moves behavior."
   },
   {
-    "objectID": "projects/project1/index.html",
-    "href": "projects/project1/index.html",
-    "title": "Analysis of Cars",
-    "section": "",
-    "text": "This mini project explores the relationship between fuel efficiency (mpg) and engine displacement (disp) in the mtcars dataset. The two variables have a correlation of -0.85, which suggests a strong negative association."
+    "objectID": "projects/creative-gaming-uplift/index.html#why-this-case-was-different",
+    "href": "projects/creative-gaming-uplift/index.html#why-this-case-was-different",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "Why This Case Was Different",
+    "text": "Why This Case Was Different\nThe business setup was centered on a campaign for Zalon, a paid in-game offer. Haruki, the decision-maker in the case, wanted to choose whom to target using experimental evidence rather than intuition.\nThe assignment provided a rare and valuable structure:\n\na 30,000-user organic control group that did not receive an ad\na 30,000-user randomized ad group that did receive an ad\na broader 150,000-user treatment file, from which 120,000 users remained as the deployable audience after holding out a random 30,000\n\nThat design made causal targeting possible. Instead of guessing treatment effect from observational data, I could compare outcomes across treated and untreated users and learn which player profiles were genuinely persuadable."
   },
   {
-    "objectID": "projects/project1/index.html#scatterplot",
-    "href": "projects/project1/index.html#scatterplot",
-    "title": "Analysis of Cars",
-    "section": "Scatterplot",
-    "text": "Scatterplot\n\nlibrary(tidyverse)\ndata(mtcars)\nmtcars |&gt;\n  ggplot(aes(mpg, disp)) +\n  geom_point(color=\"dodgerblue4\", size=2) +\n  labs(\n    title = \"Fuel Efficiency and Engine Displacement Move in Opposite Directions\",\n    x = \"Miles per gallon\",\n    y = \"Engine displacement\"\n  ) +\n  theme_minimal(base_size = 12)\n\n\n\n\n\n\n\n\nCars with larger engines tend to have lower fuel efficiency, which is exactly the pattern we would expect from the plot. This page is intentionally simple, but it serves as a first example of how I want to present analysis on the site."
+    "objectID": "projects/creative-gaming-uplift/index.html#what-i-wanted-the-model-to-do",
+    "href": "projects/creative-gaming-uplift/index.html#what-i-wanted-the-model-to-do",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "What I Wanted The Model To Do",
+    "text": "What I Wanted The Model To Do\nI framed the project around a ranking problem:\n\nPredict the probability of conversion under treatment.\nPredict the probability of conversion under no treatment.\nTake the difference between those two predictions.\nRank users by that incremental gap rather than by raw purchase propensity.\n\nIn code, the core scoring rule was simple:\ntest_pd[\"uplift_score\"] = (\n    test_pd[\"pred_treatment\"] - test_pd[\"pred_control\"]\n)\nThat one subtraction is the heart of the case. It turns a standard response model into a decision tool for ad allocation.\nTo estimate those two counterfactual probabilities, I trained separate response models on treated and untreated users and scored the holdout sample with both:\nclf_treatment = rsm.model.logistic(\n    data={\"treat\": train_df.filter(pl.col(\"ad\") == 1)},\n    rvar=\"converted\",\n    lev=\"yes\",\n    evar=evar,\n)\n\nclf_control = rsm.model.logistic(\n    data={\"control\": train_df.filter(pl.col(\"ad\") == 0)},\n    rvar=\"converted\",\n    lev=\"yes\",\n    evar=evar,\n)"
+  },
+  {
+    "objectID": "projects/creative-gaming-uplift/index.html#the-experiment-inside-the-data",
+    "href": "projects/creative-gaming-uplift/index.html#the-experiment-inside-the-data",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "The Experiment Inside The Data",
+    "text": "The Experiment Inside The Data\nTo create an RCT-style modeling sample, I stacked the organic control users and randomized ad users into one dataset and carried a binary ad flag through the workflow.\ncg_ad_random = cg_ad_random.with_columns(pl.lit(1).alias(\"ad\"))\ncg_organic_control = cg_organic_control.with_columns(pl.lit(0).alias(\"ad\"))\ncg_rct_stacked = pl.concat([cg_organic_control, cg_ad_random], how=\"vertical\")\nI then created a stratified train/test split so that treatment status and conversion rates stayed balanced across the modeling pipeline. That step matters more than it looks. If the split distorts treatment/control balance, uplift estimates become noisy very quickly."
+  },
+  {
+    "objectID": "projects/creative-gaming-uplift/index.html#where-uplift-beat-propensity",
+    "href": "projects/creative-gaming-uplift/index.html#where-uplift-beat-propensity",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "Where Uplift Beat Propensity",
+    "text": "Where Uplift Beat Propensity\nThe most convincing first result came from comparing logistic uplift targeting with logistic propensity targeting across the ranked list of users.\nThe red line below is the naive alternative: rank users by the predicted probability of purchase given an ad.\nThe teal line is the better causal alternative: rank users by the difference between predicted purchase probability with an ad and predicted purchase probability without an ad.\n\n\n\nCumulative incremental uplift rises faster under uplift-based ranking than under plain propensity ranking, especially in the most valuable part of the customer list.\n\n\nWhat I like about this chart is that it shows the business mistake very clearly. The propensity model still finds responsive users, but the uplift model does a better job concentrating truly persuadable users near the top of the list. That is exactly where paid acquisition and CRM teams make money.\nAt a fixed rollout depth of 25% of the 120,000-user deployment population, the notebook estimated:\n\n\n\n\n\n\n\n\n\n\nModel family\nRanking rule\nTargeted share\nCustomers targeted\nNet incremental profit\n\n\n\n\nLogistic Regression\nPropensity\n25%\n30,000\n$19,266\n\n\nLogistic Regression\nUplift\n25%\n30,000\n$22,727\n\n\n\nSo even before tuning the optimal cutoff, uplift modeling generated about $3,461 more incremental profit than the comparable propensity rule."
+  },
+  {
+    "objectID": "projects/creative-gaming-uplift/index.html#the-more-important-question-was-how-deep-should-we-go",
+    "href": "projects/creative-gaming-uplift/index.html#the-more-important-question-was-how-deep-should-we-go",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "The More Important Question Was “How Deep Should We Go?”",
+    "text": "The More Important Question Was “How Deep Should We Go?”\nThe notebook became much more interesting once I stopped treating targeting depth as fixed.\nInstead of assuming we should always target 25% of users, I calculated cumulative profit as:\n\\[\n\\text{Incremental profit} =\n\\text{incremental responses} \\times \\text{revenue per purchase}\n- \\text{customers targeted} \\times \\text{cost per ad}\n\\]\nUsing the campaign assumptions from the case:\n\nrevenue per purchase: $14.99\ncost per ad: $1.50\n\nI searched for the targeting depth that maximized cumulative incremental profit.\nThis is where the uplift framing became much more valuable. The best rollout rule did not target the same share of customers as the best propensity rule.\n\n\n\nAllowing each strategy to choose its own best targeting depth makes the business advantage of uplift modeling even clearer.\n\n\nThe optimal rules from the notebook were:\n\n\n\nStrategy\nBest targeting depth\nNet incremental profit\n\n\n\n\nLogistic Propensity\n15%\n$32,213\n\n\nLogistic Uplift\n25%\n$45,908\n\n\nXGBoost Propensity\n20%\n$41,414\n\n\nXGBoost Uplift\n30%\n$59,161\n\n\n\nThat table is the real punchline of the case. The uplift model did not just reorder the same audience a little better. It changed the recommended budget allocation and the optimal size of the campaign."
+  },
+  {
+    "objectID": "projects/creative-gaming-uplift/index.html#what-the-tree-model-added",
+    "href": "projects/creative-gaming-uplift/index.html#what-the-tree-model-added",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "What The Tree Model Added",
+    "text": "What The Tree Model Added\nI also reviewed non-linear models in the notebook, especially XGBoost. The XGBoost uplift curve was stronger than the logistic version and stayed elevated longer before tapering off.\nFor the tree-based version, the core idea stayed the same even though the model class changed: estimate treatment and control response separately, then rank players by the gap.\ntab_uplift_xgb = rsm.model.uplift_tab(\n    test_df_xgb,\n    \"converted\",\n    \"yes\",\n    \"uplift_score_xgb\",\n    \"ad\",\n    1,\n    qnt=20,\n)\n\n\n\nThe XGBoost uplift ranking keeps incremental lift high deeper into the file, which is why its optimal campaign size ends up larger than the logistic uplift solution.\n\n\nThis mattered operationally. Under the logistic uplift model, the best audience size was 25%. Under XGBoost uplift, the best audience size moved to 30%, and the projected profit improved further.\nThat is a good example of when I would use interpretable models for diagnosis but still be willing to deploy a more flexible ranking model if the profit evidence is compelling."
+  },
+  {
+    "objectID": "projects/creative-gaming-uplift/index.html#what-a-persuadable-player-looked-like",
+    "href": "projects/creative-gaming-uplift/index.html#what-a-persuadable-player-looked-like",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "What A Persuadable Player Looked Like",
+    "text": "What A Persuadable Player Looked Like\nOne of the useful side analyses in the notebook scanned gameplay variables by average treatment-control gap. The strongest signals were not generic demographics. They were indicators of in-game engagement and social play.\n\n\n\nThe strongest persuadability signals come from gameplay intensity, social engagement, and prior ad interaction rather than from broad customer labels.\n\n\nThe most revealing features were:\n\nNumSpaceHeroBadges\nNumAdsClicked\nNumFriends\nTimesLostSpaceship\nTimesCaptain\n\nThat pattern tells a compelling product story. The users most likely to be influenced by an ad were not necessarily the users with the highest raw purchase probability. They were users with evidence of engagement, exploration, and responsiveness inside the game environment.\nTo me, that is a much stronger business insight than simply saying “high scorers buy more.” It suggests that ad effectiveness depended on where the player was in the gameplay loop and how socially embedded they already were."
+  },
+  {
+    "objectID": "projects/creative-gaming-uplift/index.html#what-i-would-tell-a-growth-team",
+    "href": "projects/creative-gaming-uplift/index.html#what-i-would-tell-a-growth-team",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "What I Would Tell A Growth Team",
+    "text": "What I Would Tell A Growth Team\nIf I were presenting this case to a marketing or growth lead, my recommendation would be:\n\ndo not rank users only by conversion propensity\ntreat incremental lift as the primary targeting signal\ntune the audience size jointly with the model, because the best cutoff is part of the strategy\nuse the uplift model to find persuadable users and avoid spending on sure-things or lost-causes\n\nThat recommendation is what makes this project portfolio-worthy for me. It moves beyond model fitting and into resource allocation."
+  },
+  {
+    "objectID": "projects/creative-gaming-uplift/index.html#why-i-kept-this-in-my-portfolio",
+    "href": "projects/creative-gaming-uplift/index.html#why-i-kept-this-in-my-portfolio",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "Why I Kept This In My Portfolio",
+    "text": "Why I Kept This In My Portfolio\nThis case shows several things I want employers to see:\n\nI can work from randomized treatment-control data rather than only observational data\nI understand the difference between prediction and causation in targeting problems\nI can connect model outputs to rollout depth, cost assumptions, and profit\nI can turn a classroom notebook into a business-facing recommendation\n\nIt is one of the clearest examples in my coursework of using analytics to answer not just “who will respond?” but “where does the ad create value?”"
+  },
+  {
+    "objectID": "projects/creative-gaming-uplift/index.html#technical-footnote",
+    "href": "projects/creative-gaming-uplift/index.html#technical-footnote",
+    "title": "Who Should See the Ad? Uplift Modeling at Creative Gaming",
+    "section": "Technical Footnote",
+    "text": "Technical Footnote\n\nTools: Python, Polars, pyrsm, plotnine, scikit-learn\nMethods: uplift modeling, treatment/control scoring, cumulative profit optimization, model comparison"
+  },
+  {
+    "objectID": "posts/tuango/index.html",
+    "href": "posts/tuango/index.html",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "",
+    "text": "Tuango is a Chinese deal-of-the-day platform whose model resembles Groupon: it promotes discounted offers from local and national merchants and distributes those offers to customers through mobile apps. In the Tuango case, the company wanted to promote a karaoke deal to mobile users in Hangzhou who had shown interest in the category.\nWhat makes the case more interesting than a standard response model is that the message itself is not free. Susan Liu, the newly appointed Chief Data Scientist for Tuango’s mobile marketing group, challenged an internal assumption that pushing offers through the app had essentially zero marginal cost. Her concern was behavioral rather than technical: if customers received too many irrelevant messages, they might block future deal notifications altogether and permanently weaken an important marketing channel.\nThat detail changes the problem from “who is likely to buy?” to a more useful business question:\nWhich customers should receive a message once the true cost of messaging is taken seriously?"
+  },
+  {
+    "objectID": "posts/tuango/index.html#business-context",
+    "href": "posts/tuango/index.html#business-context",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "",
+    "text": "Tuango is a Chinese deal-of-the-day platform whose model resembles Groupon: it promotes discounted offers from local and national merchants and distributes those offers to customers through mobile apps. In the Tuango case, the company wanted to promote a karaoke deal to mobile users in Hangzhou who had shown interest in the category.\nWhat makes the case more interesting than a standard response model is that the message itself is not free. Susan Liu, the newly appointed Chief Data Scientist for Tuango’s mobile marketing group, challenged an internal assumption that pushing offers through the app had essentially zero marginal cost. Her concern was behavioral rather than technical: if customers received too many irrelevant messages, they might block future deal notifications altogether and permanently weaken an important marketing channel.\nThat detail changes the problem from “who is likely to buy?” to a more useful business question:\nWhich customers should receive a message once the true cost of messaging is taken seriously?"
+  },
+  {
+    "objectID": "posts/tuango/index.html#the-decision-problem",
+    "href": "posts/tuango/index.html#the-decision-problem",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "The Decision Problem",
+    "text": "The Decision Problem\nThe campaign followed a structured rollout design:\n\nStart with all mobile customers in Hangzhou who had shown interest in karaoke: 418,160 customers.\nRandomly sample 5% of them, or 20,908 customers, and send the deal to all of them.\nUse the resulting response data to model purchase probability and order size.\nApply the model to the remaining 397,252 rollout customers.\nDecide whether targeting improves profitability relative to messaging everyone.\n\nThat setup is appealing from an analytics perspective because it creates a clear bridge from experimentation to deployment. Rather than fitting a model in the abstract, I could evaluate whether a targeting rule would actually improve profit in the rollout population."
+  },
+  {
+    "objectID": "posts/tuango/index.html#my-framing",
+    "href": "posts/tuango/index.html#my-framing",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "My Framing",
+    "text": "My Framing\nI approached the case as a two-step targeting problem:\n\nEstimate the probability that a customer buys the karaoke deal.\nCompare that probability against a breakeven response threshold implied by campaign economics.\n\nThis framing matters because a prediction is only useful when it changes a decision. If messaging costs were truly zero, it might make sense to contact everyone. But once the app-channel cost is acknowledged, the model needs to support a selective rollout policy."
+  },
+  {
+    "objectID": "posts/tuango/index.html#data-and-features",
+    "href": "posts/tuango/index.html#data-and-features",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "Data And Features",
+    "text": "Data And Features\nI used Polars and pyrsm to build the workflow and work with the case data efficiently.\nThe customer history variables included:\n\nrecency\nfrequency\nmonetary\nage\ngender\nmusic\n\nI first converted purchase response into a binary modeling target:\ntuango = tuango.with_columns(\n    pl.when(pl.col(\"buyer\") == \"yes\").then(1)\n      .when(pl.col(\"buyer\") == \"no\").then(0)\n      .otherwise(None)\n      .alias(\"buyer_yes\")\n)\nIn the modeling sample, the average purchase rate was about 9.66%, and among buyers the average order size was about 3.94 karaoke sessions."
+  },
+  {
+    "objectID": "posts/tuango/index.html#modeling-response",
+    "href": "posts/tuango/index.html#modeling-response",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "Modeling Response",
+    "text": "Modeling Response\nI used logistic regression to estimate purchase propensity for the offer:\nclf = rsm.model.logistic(\n    {\"tuango\": df_model},\n    rvar=\"buyer\",\n    lev=\"yes\",\n    evar=[\"recency\", \"frequency\", \"monetary\", \"age\", \"gender\", \"music\"],\n)\nOne useful outcome from the model interpretation stage was that monetary and music emerged as the most important predictors of purchase behavior. That finding is intuitive: customers with stronger historical spend and clear category affinity were more likely to respond to the karaoke promotion. By contrast, recency added relatively little once the richer customer history variables were already in the model.\nI also estimated a linear regression for order size among buyers, but that second model turned out to be much weaker. In practical terms, I found that predicting whether someone would buy was far easier than predicting how much they would buy conditional on response. That asymmetry shaped my interpretation of the case: purchase incidence was where the strongest business signal lived.\n\n\n\nPermutation importance from the Tuango response model shows that category affinity and historical spend carry most of the usable targeting signal."
+  },
+  {
+    "objectID": "posts/tuango/index.html#why-the-9-rmb-cost-matters",
+    "href": "posts/tuango/index.html#why-the-9-rmb-cost-matters",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "Why The 9 RMB Cost Matters",
+    "text": "Why The 9 RMB Cost Matters\nThe case background explains why Tuango treated 9 RMB as the marginal cost of sending one additional message. That figure was not just an operational messaging fee. It reflected the expected long-run cost of customer fatigue and opt-out behavior in the mobile channel.\nThis is the most important strategic insight in the case. Once messaging has a real economic cost, the correct decision rule is not “contact everyone with nonzero probability.” Instead, the campaign should contact only customers whose expected profit exceeds that marginal cost.\nUsing the observed mean order size and Tuango’s fee structure, I calculated a breakeven response rate of about 9.32%.\ncost = MESSAGE_COST\navg_ordersize_yes = q2.filter(pl.col(\"buyer\") == \"yes\").select(\"mean_ordersize\").item()\nmargin = TUANGO_FEE * PRICE_PER_SESSION * avg_ordersize_yes\n\nbreakeven = cost / margin\nThat threshold became the operational cutoff for the rollout.\nThe table below is the key decision summary I would show to a marketing manager before launch:\n\n\n\n\n\n\n\n\n\n\nStrategy\nCustomers Messaged\nExpected Response Rate\nExpected Profit (RMB)\nROME\n\n\n\n\nMessage Everyone\n397,252\n9.66%\n130,019\n3.6%\n\n\nLogistic Targeting\n174,126\n14.04%\n810,139\n51.7%"
+  },
+  {
+    "objectID": "posts/tuango/index.html#what-happens-if-tuango-targets-everyone",
+    "href": "posts/tuango/index.html#what-happens-if-tuango-targets-everyone",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "What Happens If Tuango Targets Everyone?",
+    "text": "What Happens If Tuango Targets Everyone?\nThe baseline policy is simple: send the karaoke offer to all 397,252 remaining rollout customers.\nUnder that strategy, the projected economics were:\n\nmessages sent: 397,252\nprojected profit: about 130,019 RMB\nprojected return on marketing expenditure: about 3.6%\n\nThat is profitable, but only marginally so. A strategy like this risks overspending on many low-value customers whose response probability is barely above zero."
+  },
+  {
+    "objectID": "posts/tuango/index.html#what-happens-under-model-based-targeting",
+    "href": "posts/tuango/index.html#what-happens-under-model-based-targeting",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "What Happens Under Model-Based Targeting?",
+    "text": "What Happens Under Model-Based Targeting?\nI then used the logistic model to target only customers whose predicted response probability exceeded the breakeven threshold. That reduced the outreach list to 174,126 customers.\nThe targeting step itself was straightforward: score the rollout audience, compare each score with the breakeven rate, and keep only the customers whose expected response exceeded the economic hurdle.\nrollout_scored = clf.predict(data={\"rollout\": tuango_rollout})[\"rollout\"]\n\ntargeted_rollout = (\n    rollout_scored\n    .with_columns((pl.col(\"pred_yes\") &gt;= breakeven).alias(\"target\"))\n    .filter(pl.col(\"target\"))\n)\nThe model-based targeting policy produced much stronger projected economics:\n\nmessages sent: 174,126\nprojected response rate: about 14.04%\nprojected profit: about 810,139 RMB\nprojected return on marketing expenditure: about 51.7%\n\nThe business logic is straightforward: send fewer messages, but send them to people who are much more likely to respond profitably."
+  },
+  {
+    "objectID": "posts/tuango/index.html#rollout-evaluation-on-post-data",
+    "href": "posts/tuango/index.html#rollout-evaluation-on-post-data",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "Rollout Evaluation On Post Data",
+    "text": "Rollout Evaluation On Post Data\nA strong portfolio case should go beyond projected model performance, so I also paid close attention to the post-rollout evaluation. In the notebook, I re-created the targeting logic on tuango_post.parquet and compared “target all” with logit-based targeting using actual outcomes.\nThat comparison is the most convincing result in the project:\nTarget All      profit ≈ 111,712.5 RMB   rome ≈ 0.031\nLogit Targeting profit ≈ 887,423.0 RMB   rome ≈ 0.566\nSo even after moving from the planning stage to realized rollout results, the selective targeting policy dramatically outperformed the naive strategy of contacting everyone.\nTwo numbers summarize the difference:\n\nprofit rose from roughly 112k RMB to 887k RMB\nmarketing return increased from about 3.1% to 56.6%\n\nThat is the kind of lift that makes a targeting model operationally worthwhile.\n\n\n\nProjected and realized campaign economics both favor selective targeting over sending the offer to everyone."
+  },
+  {
+    "objectID": "posts/tuango/index.html#my-interpretation",
+    "href": "posts/tuango/index.html#my-interpretation",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "My Interpretation",
+    "text": "My Interpretation\nWhat I like most about this case is that the final answer is not really “logistic regression works.” The more important conclusion is that a campaign model should be evaluated against decision economics, not only against statistical fit.\nIn this case, three ideas mattered:\n\ncustomer targeting should reflect channel cost, not just response likelihood\npurchase probability was much more predictable than order size\nmodel deployment should be judged on realized profit, not only in-sample calibration\n\nIf I were communicating this to a growth or CRM team, my recommendation would be clear: keep the mobile channel selective, use the model to filter the audience, and treat irrelevant messaging as a real cost because it degrades long-term customer contactability."
+  },
+  {
+    "objectID": "posts/tuango/index.html#why-this-belongs-in-my-portfolio",
+    "href": "posts/tuango/index.html#why-this-belongs-in-my-portfolio",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "Why This Belongs In My Portfolio",
+    "text": "Why This Belongs In My Portfolio\nThis project reflects the kind of analytics work I enjoy most: turning a real business constraint into a decision rule that improves profit. It sits at the intersection of marketing analytics, experimentation, customer targeting, and model interpretation.\nIt also reflects an approach I want my portfolio to show consistently: not just building a model, but asking whether the model changes what the business should do."
+  },
+  {
+    "objectID": "posts/tuango/index.html#technical-notes",
+    "href": "posts/tuango/index.html#technical-notes",
+    "title": "Targeting Mobile App Messages at Tuango",
+    "section": "Technical Notes",
+    "text": "Technical Notes\n\nTools: Python, Polars, pyrsm, plotnine\nMethods: logistic regression, permutation importance, threshold optimization, rollout evaluation"
   },
   {
     "objectID": "resume.html",
@@ -33,6 +180,90 @@
     "title": "Resume",
     "section": "",
     "text": "A one-page snapshot of my background, experience, and current coursework. You can view the PDF here, open it in a new tab, or download a copy.\n\n\nOpen PDF Download Resume\n\n\nDownload PDF file."
+  },
+  {
+    "objectID": "posts/intuit/index.html",
+    "href": "posts/intuit/index.html",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "",
+    "text": "This case focuses on Intuit’s effort to promote an upgrade to QuickBooks 3.0. The setting is historically old, but the analytics problem is still highly relevant: after a first mailing campaign, which small-business customers should receive a second mailing?\nThe objective was not to maximize response rate in the abstract. It was to decide which non-responders from wave 1 were still worth contacting in wave 2 once direct-mail cost and contribution margin were taken into account.\nThat makes the case a classic example of targeted lifecycle marketing: use customer history to decide where incremental outreach is likely to pay off."
+  },
+  {
+    "objectID": "posts/intuit/index.html#business-context",
+    "href": "posts/intuit/index.html#business-context",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "",
+    "text": "This case focuses on Intuit’s effort to promote an upgrade to QuickBooks 3.0. The setting is historically old, but the analytics problem is still highly relevant: after a first mailing campaign, which small-business customers should receive a second mailing?\nThe objective was not to maximize response rate in the abstract. It was to decide which non-responders from wave 1 were still worth contacting in wave 2 once direct-mail cost and contribution margin were taken into account.\nThat makes the case a classic example of targeted lifecycle marketing: use customer history to decide where incremental outreach is likely to pay off."
+  },
+  {
+    "objectID": "posts/intuit/index.html#the-decision-problem",
+    "href": "posts/intuit/index.html#the-decision-problem",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "The Decision Problem",
+    "text": "The Decision Problem\nIntuit had already mailed 801,821 businesses in wave 1, and 38,487 of them responded. That left a wave-2 eligible population of 763,334 businesses who had not yet upgraded.\nThe dataset I worked with was a random sample of 75,000 businesses from the larger campaign universe. The target variable, res1, indicated whether a business responded to the first upgrade mailing.\nThe practical question was:\nWhich businesses should be selected for wave 2 so that the expected profit from the mailing is maximized?"
+  },
+  {
+    "objectID": "posts/intuit/index.html#data-and-features",
+    "href": "posts/intuit/index.html#data-and-features",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "Data And Features",
+    "text": "Data And Features\nThe core variables described customer value and purchase history:\n\nnumber of prior orders\ntotal dollars spent\nmonths since last order\nmonths since original QuickBooks purchase\ncurrent version ownership\ntax product ownership\nprior upgrade behavior\nZIP-code buckets\ndemographic flags such as sex and bizflag\n\nI also added several engineered features to make the models more expressive, including:\n\nlog_dollars\nlog_numords\navg_order_value\nrecent / stale buyer flags\na tax-product × prior-upgrade interaction\n\nThat feature engineering step helped translate raw customer history into signals that are more useful for marketing response modeling.\nOne simple exploratory result from the notebook was especially revealing: ZIP-code buckets had highly uneven response behavior. In the sample, the top ZIP bin was a dramatic outlier, which suggests there was real geographic structure in upgrade propensity rather than pure noise.\n\n\n\nResponse rate by ZIP-code bucket highlights that upgrade demand is not evenly distributed across the customer base."
+  },
+  {
+    "objectID": "posts/intuit/index.html#modeling-strategy",
+    "href": "posts/intuit/index.html#modeling-strategy",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "Modeling Strategy",
+    "text": "Modeling Strategy\nI compared three approaches on the test set:\n\na baseline logistic regression\na feature-engineered logistic regression\na multilayer perceptron (MLP)\n\nThis comparison mattered because I did not want to assume that the most interpretable model would also be the most profitable. In targeting problems, a model with slightly better ranking quality can generate significantly different campaign economics.\nThe feature engineering and model fitting stage looked roughly like this:\nintuit = intuit.with_columns(\n    log_dollars=pl.col(\"dollars\").log1p(),\n    log_numords=pl.col(\"numords\").log1p(),\n    avg_order_value=(pl.col(\"dollars\") / pl.col(\"numords\").clip(lower_bound=1)),\n    recent_buyer=(pl.col(\"last\") &lt;= 12).cast(pl.Int8),\n    stale_buyer=(pl.col(\"last\") &gt;= 24).cast(pl.Int8),\n)\n\nmlp_model = rsm.model.mlp(\n    data={\"train\": train_df},\n    rvar=\"res1\",\n    lev=\"yes\",\n    evar=model_features,\n    hidden_layer_sizes=(16, 8),\n)"
+  },
+  {
+    "objectID": "posts/intuit/index.html#key-assumptions",
+    "href": "posts/intuit/index.html#key-assumptions",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "Key Assumptions",
+    "text": "Key Assumptions\nThe notebook used the following campaign assumptions:\n\nmail cost per piece: 1.41\nmargin per responder: 60.0\nwave-2 response adjustment: 0.50\n\nThose assumptions allowed me to convert predicted response into expected profit rather than reporting only AUC or classification accuracy."
+  },
+  {
+    "objectID": "posts/intuit/index.html#test-set-comparison",
+    "href": "posts/intuit/index.html#test-set-comparison",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "Test-Set Comparison",
+    "text": "Test-Set Comparison\nThe model comparison showed a useful pattern:\n\nthe two logistic models produced the best AUC values, around 0.754\nthe MLP had slightly lower AUC at about 0.743\nbut the MLP generated the highest expected test profit\n\nThat result is a good reminder that the “best” model depends on the business objective. If the goal had been pure discrimination, I might have preferred the logistic models. But because the campaign decision depends on profit at a chosen targeting depth, the MLP became the operational winner.\nIn the test sample, the best rule was:\n\nbest model: MLP\nselected test businesses: 5,643\nscore threshold: about 0.047\nexpected test profit: about 10,578\nexpected test responders: about 309\n\n\n\n\nModel\nTest AUC\nSelected Customers\nExpected Population Profit\n\n\n\n\nBaseline Logistic\n0.754\n6,188\n312,086\n\n\nFeature Logistic\n0.754\n6,212\n311,855\n\n\nMLP\n0.743\n5,643\n377,367\n\n\n\n\n\n\nThe MLP does not win on AUC, but it produces the highest projected campaign profit and therefore the best mailing rule."
+  },
+  {
+    "objectID": "posts/intuit/index.html#scaling-to-the-full-wave-2-population",
+    "href": "posts/intuit/index.html#scaling-to-the-full-wave-2-population",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "Scaling To The Full Wave-2 Population",
+    "text": "Scaling To The Full Wave-2 Population\nThe stronger result came after scaling the selected strategy to the full wave-2 eligible population.\nUsing the best-performing model, the notebook projected:\n\nwave-2 eligible population: 763,334\nexpected population responders: about 11,020\nexpected population profit: about 377,367\n\nThis is exactly the kind of number that makes a predictive model decision-relevant. Instead of saying “these customers score highly,” I could say “this mailing rule is expected to produce meaningful campaign profit at scale.”"
+  },
+  {
+    "objectID": "posts/intuit/index.html#who-was-most-likely-to-upgrade",
+    "href": "posts/intuit/index.html#who-was-most-likely-to-upgrade",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "Who Was Most Likely To Upgrade?",
+    "text": "Who Was Most Likely To Upgrade?\nThe targeted group looked materially different from the broader eligible pool.\nRelative to the overall eligible population, targeted businesses had:\n\nhigher predicted upgrade probability\nmore prior orders\nhigher historical spend\nmore recent purchase activity\na much higher share of prior upgrading behavior\n\nOne particularly useful business signal was that customers with stronger purchase history and prior upgrade behavior were much more likely to respond again. That is intuitive, but still valuable: the model quantified that intuition and turned it into a mailing rule.\n\n\n\nThe targeted segment is meaningfully stronger on order history, spend, and prior upgrade behavior than the overall wave-2 eligible population."
+  },
+  {
+    "objectID": "posts/intuit/index.html#my-interpretation",
+    "href": "posts/intuit/index.html#my-interpretation",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "My Interpretation",
+    "text": "My Interpretation\nWhat I find most interesting in this case is the tradeoff between interpretability and deployment performance.\nThe feature-engineered logistic regression remained attractive because it was easier to explain, and its AUC was marginally better. But for operational targeting, the MLP produced the highest expected profit, which made it the better execution model in this specific setting.\nIf I were presenting this to a CRM or growth team, I would frame the recommendation like this:\n\nuse interpretable logistic models to understand the response drivers\nuse the strongest profit-generating model to produce the mailing list\nevaluate campaign strategies by expected profit and mailing depth, not by AUC alone\n\nThat separation between “understanding” and “execution” is one of the most useful lessons in the project."
+  },
+  {
+    "objectID": "posts/intuit/index.html#why-this-belongs-in-my-portfolio",
+    "href": "posts/intuit/index.html#why-this-belongs-in-my-portfolio",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "Why This Belongs In My Portfolio",
+    "text": "Why This Belongs In My Portfolio\nThis case demonstrates several strengths I want my portfolio to show:\n\ntranslating campaign data into a targeting decision\nengineering features from customer purchase history\ncomparing interpretable and non-linear models\nevaluating models using profit rather than only predictive accuracy\n\nIt also fits well with the rest of my work because it extends a theme I care about: using analytics to make customer outreach more selective, more efficient, and more defensible."
+  },
+  {
+    "objectID": "posts/intuit/index.html#technical-notes",
+    "href": "posts/intuit/index.html#technical-notes",
+    "title": "Modeling QuickBooks Upgrade Response at Intuit",
+    "section": "Technical Notes",
+    "text": "Technical Notes\n\nTools: Python, Polars, pyrsm\nMethods: logistic regression, feature engineering, neural networks, threshold-based targeting, profit scaling"
   },
   {
     "objectID": "posts/hw1/index.html",
@@ -112,27 +343,6 @@
     "text": "Conclusion\nThis simple CTA experiment shows how a familiar product question maps directly onto the main tools of classical frequentist statistics. The difference in sign-up rates gives a natural estimator, the Law of Large Numbers explains why it stabilizes, the bootstrap and analytical formulas quantify uncertainty, the Central Limit Theorem supports large-sample inference, and regression provides an equivalent and more flexible way to estimate the same effect.\nJust as importantly, the peeking example shows that good statistical practice is not only about formulas. Experimental design decisions shape what our p-values and confidence intervals actually mean. In that sense, A/B testing is not just a technical exercise in comparing two buttons or two phrases. It is a disciplined way of learning from data while being honest about uncertainty."
   },
   {
-    "objectID": "projects/project2/index.html",
-    "href": "projects/project2/index.html",
-    "title": "Portfolio Site Refresh",
-    "section": "",
-    "text": "This project tracks the ongoing refresh of my Quarto website. The main goal is to turn a basic class site into something that feels more intentional: easier to navigate, more visually consistent, and better organized around posts, projects, and coursework."
-  },
-  {
-    "objectID": "projects/project2/index.html#current-focus",
-    "href": "projects/project2/index.html#current-focus",
-    "title": "Portfolio Site Refresh",
-    "section": "Current Focus",
-    "text": "Current Focus\n\nAdd a dedicated Posts section for polished homework articles and analysis write-ups.\nImprove the Projects page so each card feels complete and informative.\nRefine the site’s colors, spacing, and typography so the overall experience feels more professional."
-  },
-  {
-    "objectID": "projects/project2/index.html#why-it-matters",
-    "href": "projects/project2/index.html#why-it-matters",
-    "title": "Portfolio Site Refresh",
-    "section": "Why It Matters",
-    "text": "Why It Matters\nBuilding the website is also part of the assignment experience. A clear and attractive structure makes it easier for readers to understand the work, and it gives me a better place to keep improving my projects over time."
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Kelun Wang",
@@ -151,7 +361,7 @@
     "href": "index.html#what-youll-find-here",
     "title": "Kelun Wang",
     "section": "What You’ll Find Here",
-    "text": "What You’ll Find Here\n\nPosts collects polished write-ups like my A/B testing article on frequentist statistics.\nProjects highlights coursework, experiments, and ongoing website development.\nResume keeps my academic background and professional experience in one place."
+    "text": "What You’ll Find Here\n\nPortfolio collects my strongest analytics case studies, technical write-ups, and modeling projects in one place.\nResume keeps my academic background and professional experience in one place."
   },
   {
     "objectID": "index.html#why-this-site-exists",

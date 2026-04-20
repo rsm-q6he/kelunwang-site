@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kelun Wang">
-<meta name="dcterms.date" content="2026-04-15">
-<meta name="description" content="An in-progress project focused on reorganizing this Quarto site, improving navigation, and building a cleaner portfolio experience.">
+<meta name="dcterms.date" content="2026-04-19">
+<meta name="description" content="A customer targeting case study that compares logistic regression and neural networks to optimize a wave-2 upgrade mailing for Intuit QuickBooks.">
 
-<title>Portfolio Site Refresh – Kelun Wang</title>
+<title>Modeling QuickBooks Upgrade Response at Intuit – Kelun Wang</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -25,6 +25,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -87,12 +122,8 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Resume</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../posts.html"> 
-<span class="menu-text">Posts</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../projects.html"> 
-<span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../portfolio.html"> 
+<span class="menu-text">Portfolio</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -110,8 +141,17 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#current-focus" id="toc-current-focus" class="nav-link active" data-scroll-target="#current-focus">Current Focus</a></li>
-  <li><a href="#why-it-matters" id="toc-why-it-matters" class="nav-link" data-scroll-target="#why-it-matters">Why It Matters</a></li>
+  <li><a href="#business-context" id="toc-business-context" class="nav-link active" data-scroll-target="#business-context">Business Context</a></li>
+  <li><a href="#the-decision-problem" id="toc-the-decision-problem" class="nav-link" data-scroll-target="#the-decision-problem">The Decision Problem</a></li>
+  <li><a href="#data-and-features" id="toc-data-and-features" class="nav-link" data-scroll-target="#data-and-features">Data And Features</a></li>
+  <li><a href="#modeling-strategy" id="toc-modeling-strategy" class="nav-link" data-scroll-target="#modeling-strategy">Modeling Strategy</a></li>
+  <li><a href="#key-assumptions" id="toc-key-assumptions" class="nav-link" data-scroll-target="#key-assumptions">Key Assumptions</a></li>
+  <li><a href="#test-set-comparison" id="toc-test-set-comparison" class="nav-link" data-scroll-target="#test-set-comparison">Test-Set Comparison</a></li>
+  <li><a href="#scaling-to-the-full-wave-2-population" id="toc-scaling-to-the-full-wave-2-population" class="nav-link" data-scroll-target="#scaling-to-the-full-wave-2-population">Scaling To The Full Wave-2 Population</a></li>
+  <li><a href="#who-was-most-likely-to-upgrade" id="toc-who-was-most-likely-to-upgrade" class="nav-link" data-scroll-target="#who-was-most-likely-to-upgrade">Who Was Most Likely To Upgrade?</a></li>
+  <li><a href="#my-interpretation" id="toc-my-interpretation" class="nav-link" data-scroll-target="#my-interpretation">My Interpretation</a></li>
+  <li><a href="#why-this-belongs-in-my-portfolio" id="toc-why-this-belongs-in-my-portfolio" class="nav-link" data-scroll-target="#why-this-belongs-in-my-portfolio">Why This Belongs In My Portfolio</a></li>
+  <li><a href="#technical-notes" id="toc-technical-notes" class="nav-link" data-scroll-target="#technical-notes">Technical Notes</a></li>
   </ul>
 </nav>
     </div>
@@ -120,12 +160,13 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Portfolio Site Refresh</h1>
+<h1 class="title">Modeling QuickBooks Upgrade Response at Intuit</h1>
+<p class="subtitle lead">Choosing whom to mail in a wave-2 upsell campaign</p>
 </div>
 
 <div>
   <div class="description">
-    An in-progress project focused on reorganizing this Quarto site, improving navigation, and building a cleaner portfolio experience.
+    A customer targeting case study that compares logistic regression and neural networks to optimize a wave-2 upgrade mailing for Intuit QuickBooks.
   </div>
 </div>
 
@@ -142,7 +183,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 15, 2026</p>
+      <p class="date">April 19, 2026</p>
     </div>
   </div>
   
@@ -154,18 +195,199 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This project tracks the ongoing refresh of my Quarto website. The main goal is to turn a basic class site into something that feels more intentional: easier to navigate, more visually consistent, and better organized around posts, projects, and coursework.</p>
-<section id="current-focus" class="level2">
-<h2 class="anchored" data-anchor-id="current-focus">Current Focus</h2>
-<ul>
-<li>Add a dedicated <code>Posts</code> section for polished homework articles and analysis write-ups.</li>
-<li>Improve the <code>Projects</code> page so each card feels complete and informative.</li>
-<li>Refine the site’s colors, spacing, and typography so the overall experience feels more professional.</li>
-</ul>
+<section id="business-context" class="level2">
+<h2 class="anchored" data-anchor-id="business-context">Business Context</h2>
+<p>This case focuses on Intuit’s effort to promote an upgrade to QuickBooks 3.0. The setting is historically old, but the analytics problem is still highly relevant: after a first mailing campaign, which small-business customers should receive a second mailing?</p>
+<p>The objective was not to maximize response rate in the abstract. It was to decide which non-responders from wave 1 were still worth contacting in wave 2 once direct-mail cost and contribution margin were taken into account.</p>
+<p>That makes the case a classic example of targeted lifecycle marketing: use customer history to decide where incremental outreach is likely to pay off.</p>
 </section>
-<section id="why-it-matters" class="level2">
-<h2 class="anchored" data-anchor-id="why-it-matters">Why It Matters</h2>
-<p>Building the website is also part of the assignment experience. A clear and attractive structure makes it easier for readers to understand the work, and it gives me a better place to keep improving my projects over time.</p>
+<section id="the-decision-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-decision-problem">The Decision Problem</h2>
+<p>Intuit had already mailed <code>801,821</code> businesses in wave 1, and <code>38,487</code> of them responded. That left a wave-2 eligible population of <code>763,334</code> businesses who had not yet upgraded.</p>
+<p>The dataset I worked with was a random sample of <code>75,000</code> businesses from the larger campaign universe. The target variable, <code>res1</code>, indicated whether a business responded to the first upgrade mailing.</p>
+<p>The practical question was:</p>
+<p>Which businesses should be selected for wave 2 so that the expected profit from the mailing is maximized?</p>
+</section>
+<section id="data-and-features" class="level2">
+<h2 class="anchored" data-anchor-id="data-and-features">Data And Features</h2>
+<p>The core variables described customer value and purchase history:</p>
+<ul>
+<li>number of prior orders</li>
+<li>total dollars spent</li>
+<li>months since last order</li>
+<li>months since original QuickBooks purchase</li>
+<li>current version ownership</li>
+<li>tax product ownership</li>
+<li>prior upgrade behavior</li>
+<li>ZIP-code buckets</li>
+<li>demographic flags such as <code>sex</code> and <code>bizflag</code></li>
+</ul>
+<p>I also added several engineered features to make the models more expressive, including:</p>
+<ul>
+<li><code>log_dollars</code></li>
+<li><code>log_numords</code></li>
+<li><code>avg_order_value</code></li>
+<li>recent / stale buyer flags</li>
+<li>a tax-product × prior-upgrade interaction</li>
+</ul>
+<p>That feature engineering step helped translate raw customer history into signals that are more useful for marketing response modeling.</p>
+<p>One simple exploratory result from the notebook was especially revealing: ZIP-code buckets had highly uneven response behavior. In the sample, the top ZIP bin was a dramatic outlier, which suggests there was real geographic structure in upgrade propensity rather than pure noise.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/intuit_zip_response.png" class="img-fluid figure-img"></p>
+<figcaption>Response rate by ZIP-code bucket highlights that upgrade demand is not evenly distributed across the customer base.</figcaption>
+</figure>
+</div>
+</section>
+<section id="modeling-strategy" class="level2">
+<h2 class="anchored" data-anchor-id="modeling-strategy">Modeling Strategy</h2>
+<p>I compared three approaches on the test set:</p>
+<ul>
+<li>a baseline logistic regression</li>
+<li>a feature-engineered logistic regression</li>
+<li>a multilayer perceptron (<code>MLP</code>)</li>
+</ul>
+<p>This comparison mattered because I did not want to assume that the most interpretable model would also be the most profitable. In targeting problems, a model with slightly better ranking quality can generate significantly different campaign economics.</p>
+<p>The feature engineering and model fitting stage looked roughly like this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>intuit <span class="op">=</span> intuit.with_columns(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    log_dollars<span class="op">=</span>pl.col(<span class="st">"dollars"</span>).log1p(),</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    log_numords<span class="op">=</span>pl.col(<span class="st">"numords"</span>).log1p(),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    avg_order_value<span class="op">=</span>(pl.col(<span class="st">"dollars"</span>) <span class="op">/</span> pl.col(<span class="st">"numords"</span>).clip(lower_bound<span class="op">=</span><span class="dv">1</span>)),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    recent_buyer<span class="op">=</span>(pl.col(<span class="st">"last"</span>) <span class="op">&lt;=</span> <span class="dv">12</span>).cast(pl.Int8),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    stale_buyer<span class="op">=</span>(pl.col(<span class="st">"last"</span>) <span class="op">&gt;=</span> <span class="dv">24</span>).cast(pl.Int8),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>mlp_model <span class="op">=</span> rsm.model.mlp(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>{<span class="st">"train"</span>: train_df},</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    rvar<span class="op">=</span><span class="st">"res1"</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    lev<span class="op">=</span><span class="st">"yes"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    evar<span class="op">=</span>model_features,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    hidden_layer_sizes<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">8</span>),</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="key-assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="key-assumptions">Key Assumptions</h2>
+<p>The notebook used the following campaign assumptions:</p>
+<ul>
+<li>mail cost per piece: <code>1.41</code></li>
+<li>margin per responder: <code>60.0</code></li>
+<li>wave-2 response adjustment: <code>0.50</code></li>
+</ul>
+<p>Those assumptions allowed me to convert predicted response into expected profit rather than reporting only AUC or classification accuracy.</p>
+</section>
+<section id="test-set-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="test-set-comparison">Test-Set Comparison</h2>
+<p>The model comparison showed a useful pattern:</p>
+<ul>
+<li>the two logistic models produced the best AUC values, around <code>0.754</code></li>
+<li>the <code>MLP</code> had slightly lower AUC at about <code>0.743</code></li>
+<li>but the <code>MLP</code> generated the highest expected test profit</li>
+</ul>
+<p>That result is a good reminder that the “best” model depends on the business objective. If the goal had been pure discrimination, I might have preferred the logistic models. But because the campaign decision depends on profit at a chosen targeting depth, the <code>MLP</code> became the operational winner.</p>
+<p>In the test sample, the best rule was:</p>
+<ul>
+<li>best model: <code>MLP</code></li>
+<li>selected test businesses: <code>5,643</code></li>
+<li>score threshold: about <code>0.047</code></li>
+<li>expected test profit: about <code>10,578</code></li>
+<li>expected test responders: about <code>309</code></li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th style="text-align: right;">Test AUC</th>
+<th style="text-align: right;">Selected Customers</th>
+<th style="text-align: right;">Expected Population Profit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Baseline Logistic</td>
+<td style="text-align: right;">0.754</td>
+<td style="text-align: right;">6,188</td>
+<td style="text-align: right;">312,086</td>
+</tr>
+<tr class="even">
+<td>Feature Logistic</td>
+<td style="text-align: right;">0.754</td>
+<td style="text-align: right;">6,212</td>
+<td style="text-align: right;">311,855</td>
+</tr>
+<tr class="odd">
+<td>MLP</td>
+<td style="text-align: right;">0.743</td>
+<td style="text-align: right;">5,643</td>
+<td style="text-align: right;">377,367</td>
+</tr>
+</tbody>
+</table>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/intuit_model_comparison.png" class="img-fluid figure-img"></p>
+<figcaption>The MLP does not win on AUC, but it produces the highest projected campaign profit and therefore the best mailing rule.</figcaption>
+</figure>
+</div>
+</section>
+<section id="scaling-to-the-full-wave-2-population" class="level2">
+<h2 class="anchored" data-anchor-id="scaling-to-the-full-wave-2-population">Scaling To The Full Wave-2 Population</h2>
+<p>The stronger result came after scaling the selected strategy to the full wave-2 eligible population.</p>
+<p>Using the best-performing model, the notebook projected:</p>
+<ul>
+<li>wave-2 eligible population: <code>763,334</code></li>
+<li>expected population responders: about <code>11,020</code></li>
+<li>expected population profit: about <code>377,367</code></li>
+</ul>
+<p>This is exactly the kind of number that makes a predictive model decision-relevant. Instead of saying “these customers score highly,” I could say “this mailing rule is expected to produce meaningful campaign profit at scale.”</p>
+</section>
+<section id="who-was-most-likely-to-upgrade" class="level2">
+<h2 class="anchored" data-anchor-id="who-was-most-likely-to-upgrade">Who Was Most Likely To Upgrade?</h2>
+<p>The targeted group looked materially different from the broader eligible pool.</p>
+<p>Relative to the overall eligible population, targeted businesses had:</p>
+<ul>
+<li>higher predicted upgrade probability</li>
+<li>more prior orders</li>
+<li>higher historical spend</li>
+<li>more recent purchase activity</li>
+<li>a much higher share of prior upgrading behavior</li>
+</ul>
+<p>One particularly useful business signal was that customers with stronger purchase history and prior upgrade behavior were much more likely to respond again. That is intuitive, but still valuable: the model quantified that intuition and turned it into a mailing rule.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/intuit_target_profile.png" class="img-fluid figure-img"></p>
+<figcaption>The targeted segment is meaningfully stronger on order history, spend, and prior upgrade behavior than the overall wave-2 eligible population.</figcaption>
+</figure>
+</div>
+</section>
+<section id="my-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="my-interpretation">My Interpretation</h2>
+<p>What I find most interesting in this case is the tradeoff between interpretability and deployment performance.</p>
+<p>The feature-engineered logistic regression remained attractive because it was easier to explain, and its AUC was marginally better. But for operational targeting, the <code>MLP</code> produced the highest expected profit, which made it the better execution model in this specific setting.</p>
+<p>If I were presenting this to a CRM or growth team, I would frame the recommendation like this:</p>
+<ul>
+<li>use interpretable logistic models to understand the response drivers</li>
+<li>use the strongest profit-generating model to produce the mailing list</li>
+<li>evaluate campaign strategies by expected profit and mailing depth, not by AUC alone</li>
+</ul>
+<p>That separation between “understanding” and “execution” is one of the most useful lessons in the project.</p>
+</section>
+<section id="why-this-belongs-in-my-portfolio" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-belongs-in-my-portfolio">Why This Belongs In My Portfolio</h2>
+<p>This case demonstrates several strengths I want my portfolio to show:</p>
+<ul>
+<li>translating campaign data into a targeting decision</li>
+<li>engineering features from customer purchase history</li>
+<li>comparing interpretable and non-linear models</li>
+<li>evaluating models using profit rather than only predictive accuracy</li>
+</ul>
+<p>It also fits well with the rest of my work because it extends a theme I care about: using analytics to make customer outreach more selective, more efficient, and more defensible.</p>
+</section>
+<section id="technical-notes" class="level2">
+<h2 class="anchored" data-anchor-id="technical-notes">Technical Notes</h2>
+<ul>
+<li>Tools: <code>Python</code>, <code>Polars</code>, <code>pyrsm</code></li>
+<li>Methods: logistic regression, feature engineering, neural networks, threshold-based targeting, profit scaling</li>
+</ul>
 
 
 </section>
@@ -578,7 +800,7 @@ ul.task-list li input[type="checkbox"] {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>MGTA 495 portfolio built with Quarto</p>
+<p>Portfolio and analytics writing built with Quarto</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;

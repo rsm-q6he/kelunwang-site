@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kelun Wang">
-<meta name="dcterms.date" content="2026-04-15">
-<meta name="description" content="A short exploratory analysis of the relationship between fuel efficiency and engine displacement in the mtcars dataset.">
+<meta name="dcterms.date" content="2026-04-18">
+<meta name="description" content="A case study on customer targeting for a mobile karaoke offer, combining response modeling, campaign economics, and rollout evaluation to improve profit.">
 
-<title>Analysis of Cars – Kelun Wang</title>
+<title>Targeting Mobile App Messages at Tuango – Kelun Wang</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -122,12 +122,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Resume</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../posts.html"> 
-<span class="menu-text">Posts</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../projects.html"> 
-<span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../portfolio.html"> 
+<span class="menu-text">Portfolio</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -145,7 +141,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#scatterplot" id="toc-scatterplot" class="nav-link active" data-scroll-target="#scatterplot">Scatterplot</a></li>
+  <li><a href="#business-context" id="toc-business-context" class="nav-link active" data-scroll-target="#business-context">Business Context</a></li>
+  <li><a href="#the-decision-problem" id="toc-the-decision-problem" class="nav-link" data-scroll-target="#the-decision-problem">The Decision Problem</a></li>
+  <li><a href="#my-framing" id="toc-my-framing" class="nav-link" data-scroll-target="#my-framing">My Framing</a></li>
+  <li><a href="#data-and-features" id="toc-data-and-features" class="nav-link" data-scroll-target="#data-and-features">Data And Features</a></li>
+  <li><a href="#modeling-response" id="toc-modeling-response" class="nav-link" data-scroll-target="#modeling-response">Modeling Response</a></li>
+  <li><a href="#why-the-9-rmb-cost-matters" id="toc-why-the-9-rmb-cost-matters" class="nav-link" data-scroll-target="#why-the-9-rmb-cost-matters">Why The 9 RMB Cost Matters</a></li>
+  <li><a href="#what-happens-if-tuango-targets-everyone" id="toc-what-happens-if-tuango-targets-everyone" class="nav-link" data-scroll-target="#what-happens-if-tuango-targets-everyone">What Happens If Tuango Targets Everyone?</a></li>
+  <li><a href="#what-happens-under-model-based-targeting" id="toc-what-happens-under-model-based-targeting" class="nav-link" data-scroll-target="#what-happens-under-model-based-targeting">What Happens Under Model-Based Targeting?</a></li>
+  <li><a href="#rollout-evaluation-on-post-data" id="toc-rollout-evaluation-on-post-data" class="nav-link" data-scroll-target="#rollout-evaluation-on-post-data">Rollout Evaluation On Post Data</a></li>
+  <li><a href="#my-interpretation" id="toc-my-interpretation" class="nav-link" data-scroll-target="#my-interpretation">My Interpretation</a></li>
+  <li><a href="#why-this-belongs-in-my-portfolio" id="toc-why-this-belongs-in-my-portfolio" class="nav-link" data-scroll-target="#why-this-belongs-in-my-portfolio">Why This Belongs In My Portfolio</a></li>
+  <li><a href="#technical-notes" id="toc-technical-notes" class="nav-link" data-scroll-target="#technical-notes">Technical Notes</a></li>
   </ul>
 </nav>
     </div>
@@ -154,12 +161,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Analysis of Cars</h1>
+<h1 class="title">Targeting Mobile App Messages at Tuango</h1>
+<p class="subtitle lead">A profit-based targeting case for mobile deal offers</p>
 </div>
 
 <div>
   <div class="description">
-    A short exploratory analysis of the relationship between fuel efficiency and engine displacement in the mtcars dataset.
+    A case study on customer targeting for a mobile karaoke offer, combining response modeling, campaign economics, and rollout evaluation to improve profit.
   </div>
 </div>
 
@@ -176,7 +184,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 15, 2026</p>
+      <p class="date">April 18, 2026</p>
     </div>
   </div>
   
@@ -188,30 +196,193 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This mini project explores the relationship between fuel efficiency (<code>mpg</code>) and engine displacement (<code>disp</code>) in the <code>mtcars</code> dataset. The two variables have a correlation of -0.85, which suggests a strong negative association.</p>
-<section id="scatterplot" class="level2">
-<h2 class="anchored" data-anchor-id="scatterplot">Scatterplot</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">|&gt;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(mpg, disp)) <span class="sc">+</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">"dodgerblue4"</span>, <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Fuel Efficiency and Engine Displacement Move in Opposite Directions"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Miles per gallon"</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Engine displacement"</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
+<section id="business-context" class="level2">
+<h2 class="anchored" data-anchor-id="business-context">Business Context</h2>
+<p>Tuango is a Chinese deal-of-the-day platform whose model resembles Groupon: it promotes discounted offers from local and national merchants and distributes those offers to customers through mobile apps. In the Tuango case, the company wanted to promote a karaoke deal to mobile users in Hangzhou who had shown interest in the category.</p>
+<p>What makes the case more interesting than a standard response model is that the message itself is not free. Susan Liu, the newly appointed Chief Data Scientist for Tuango’s mobile marketing group, challenged an internal assumption that pushing offers through the app had essentially zero marginal cost. Her concern was behavioral rather than technical: if customers received too many irrelevant messages, they might block future deal notifications altogether and permanently weaken an important marketing channel.</p>
+<p>That detail changes the problem from “who is likely to buy?” to a more useful business question:</p>
+<p>Which customers should receive a message once the true cost of messaging is taken seriously?</p>
+</section>
+<section id="the-decision-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-decision-problem">The Decision Problem</h2>
+<p>The campaign followed a structured rollout design:</p>
+<ol type="1">
+<li>Start with all mobile customers in Hangzhou who had shown interest in karaoke: <code>418,160</code> customers.</li>
+<li>Randomly sample <code>5%</code> of them, or <code>20,908</code> customers, and send the deal to all of them.</li>
+<li>Use the resulting response data to model purchase probability and order size.</li>
+<li>Apply the model to the remaining <code>397,252</code> rollout customers.</li>
+<li>Decide whether targeting improves profitability relative to messaging everyone.</li>
+</ol>
+<p>That setup is appealing from an analytics perspective because it creates a clear bridge from experimentation to deployment. Rather than fitting a model in the abstract, I could evaluate whether a targeting rule would actually improve profit in the rollout population.</p>
+</section>
+<section id="my-framing" class="level2">
+<h2 class="anchored" data-anchor-id="my-framing">My Framing</h2>
+<p>I approached the case as a two-step targeting problem:</p>
+<ol type="1">
+<li>Estimate the probability that a customer buys the karaoke deal.</li>
+<li>Compare that probability against a breakeven response threshold implied by campaign economics.</li>
+</ol>
+<p>This framing matters because a prediction is only useful when it changes a decision. If messaging costs were truly zero, it might make sense to contact everyone. But once the app-channel cost is acknowledged, the model needs to support a selective rollout policy.</p>
+</section>
+<section id="data-and-features" class="level2">
+<h2 class="anchored" data-anchor-id="data-and-features">Data And Features</h2>
+<p>I used <code>Polars</code> and <code>pyrsm</code> to build the workflow and work with the case data efficiently.</p>
+<p>The customer history variables included:</p>
+<ul>
+<li><code>recency</code></li>
+<li><code>frequency</code></li>
+<li><code>monetary</code></li>
+<li><code>age</code></li>
+<li><code>gender</code></li>
+<li><code>music</code></li>
+</ul>
+<p>I first converted purchase response into a binary modeling target:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>tuango <span class="op">=</span> tuango.with_columns(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    pl.when(pl.col(<span class="st">"buyer"</span>) <span class="op">==</span> <span class="st">"yes"</span>).then(<span class="dv">1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>      .when(pl.col(<span class="st">"buyer"</span>) <span class="op">==</span> <span class="st">"no"</span>).then(<span class="dv">0</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      .otherwise(<span class="va">None</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      .alias(<span class="st">"buyer_yes"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In the modeling sample, the average purchase rate was about <code>9.66%</code>, and among buyers the average order size was about <code>3.94</code> karaoke sessions.</p>
+</section>
+<section id="modeling-response" class="level2">
+<h2 class="anchored" data-anchor-id="modeling-response">Modeling Response</h2>
+<p>I used logistic regression to estimate purchase propensity for the offer:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>clf <span class="op">=</span> rsm.model.logistic(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"tuango"</span>: df_model},</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    rvar<span class="op">=</span><span class="st">"buyer"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    lev<span class="op">=</span><span class="st">"yes"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    evar<span class="op">=</span>[<span class="st">"recency"</span>, <span class="st">"frequency"</span>, <span class="st">"monetary"</span>, <span class="st">"age"</span>, <span class="st">"gender"</span>, <span class="st">"music"</span>],</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>One useful outcome from the model interpretation stage was that <code>monetary</code> and <code>music</code> emerged as the most important predictors of purchase behavior. That finding is intuitive: customers with stronger historical spend and clear category affinity were more likely to respond to the karaoke promotion. By contrast, <code>recency</code> added relatively little once the richer customer history variables were already in the model.</p>
+<p>I also estimated a linear regression for order size among buyers, but that second model turned out to be much weaker. In practical terms, I found that predicting <em>whether</em> someone would buy was far easier than predicting <em>how much</em> they would buy conditional on response. That asymmetry shaped my interpretation of the case: purchase incidence was where the strongest business signal lived.</p>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="assets/tuango_importance.png" class="img-fluid figure-img"></p>
+<figcaption>Permutation importance from the Tuango response model shows that category affinity and historical spend carry most of the usable targeting signal.</figcaption>
 </figure>
 </div>
+</section>
+<section id="why-the-9-rmb-cost-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-the-9-rmb-cost-matters">Why The 9 RMB Cost Matters</h2>
+<p>The case background explains why Tuango treated <code>9 RMB</code> as the marginal cost of sending one additional message. That figure was not just an operational messaging fee. It reflected the expected long-run cost of customer fatigue and opt-out behavior in the mobile channel.</p>
+<p>This is the most important strategic insight in the case. Once messaging has a real economic cost, the correct decision rule is not “contact everyone with nonzero probability.” Instead, the campaign should contact only customers whose expected profit exceeds that marginal cost.</p>
+<p>Using the observed mean order size and Tuango’s fee structure, I calculated a breakeven response rate of about <code>9.32%</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cost <span class="op">=</span> MESSAGE_COST</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>avg_ordersize_yes <span class="op">=</span> q2.<span class="bu">filter</span>(pl.col(<span class="st">"buyer"</span>) <span class="op">==</span> <span class="st">"yes"</span>).select(<span class="st">"mean_ordersize"</span>).item()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>margin <span class="op">=</span> TUANGO_FEE <span class="op">*</span> PRICE_PER_SESSION <span class="op">*</span> avg_ordersize_yes</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>breakeven <span class="op">=</span> cost <span class="op">/</span> margin</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>That threshold became the operational cutoff for the rollout.</p>
+<p>The table below is the key decision summary I would show to a marketing manager before launch:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th style="text-align: right;">Customers Messaged</th>
+<th style="text-align: right;">Expected Response Rate</th>
+<th style="text-align: right;">Expected Profit (RMB)</th>
+<th style="text-align: right;">ROME</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Message Everyone</td>
+<td style="text-align: right;">397,252</td>
+<td style="text-align: right;">9.66%</td>
+<td style="text-align: right;">130,019</td>
+<td style="text-align: right;">3.6%</td>
+</tr>
+<tr class="even">
+<td>Logistic Targeting</td>
+<td style="text-align: right;">174,126</td>
+<td style="text-align: right;">14.04%</td>
+<td style="text-align: right;">810,139</td>
+<td style="text-align: right;">51.7%</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="what-happens-if-tuango-targets-everyone" class="level2">
+<h2 class="anchored" data-anchor-id="what-happens-if-tuango-targets-everyone">What Happens If Tuango Targets Everyone?</h2>
+<p>The baseline policy is simple: send the karaoke offer to all <code>397,252</code> remaining rollout customers.</p>
+<p>Under that strategy, the projected economics were:</p>
+<ul>
+<li>messages sent: <code>397,252</code></li>
+<li>projected profit: about <code>130,019 RMB</code></li>
+<li>projected return on marketing expenditure: about <code>3.6%</code></li>
+</ul>
+<p>That is profitable, but only marginally so. A strategy like this risks overspending on many low-value customers whose response probability is barely above zero.</p>
+</section>
+<section id="what-happens-under-model-based-targeting" class="level2">
+<h2 class="anchored" data-anchor-id="what-happens-under-model-based-targeting">What Happens Under Model-Based Targeting?</h2>
+<p>I then used the logistic model to target only customers whose predicted response probability exceeded the breakeven threshold. That reduced the outreach list to <code>174,126</code> customers.</p>
+<p>The targeting step itself was straightforward: score the rollout audience, compare each score with the breakeven rate, and keep only the customers whose expected response exceeded the economic hurdle.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rollout_scored <span class="op">=</span> clf.predict(data<span class="op">=</span>{<span class="st">"rollout"</span>: tuango_rollout})[<span class="st">"rollout"</span>]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>targeted_rollout <span class="op">=</span> (</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    rollout_scored</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    .with_columns((pl.col(<span class="st">"pred_yes"</span>) <span class="op">&gt;=</span> breakeven).alias(<span class="st">"target"</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"target"</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The model-based targeting policy produced much stronger projected economics:</p>
+<ul>
+<li>messages sent: <code>174,126</code></li>
+<li>projected response rate: about <code>14.04%</code></li>
+<li>projected profit: about <code>810,139 RMB</code></li>
+<li>projected return on marketing expenditure: about <code>51.7%</code></li>
+</ul>
+<p>The business logic is straightforward: send fewer messages, but send them to people who are much more likely to respond profitably.</p>
+</section>
+<section id="rollout-evaluation-on-post-data" class="level2">
+<h2 class="anchored" data-anchor-id="rollout-evaluation-on-post-data">Rollout Evaluation On Post Data</h2>
+<p>A strong portfolio case should go beyond projected model performance, so I also paid close attention to the post-rollout evaluation. In the notebook, I re-created the targeting logic on <code>tuango_post.parquet</code> and compared “target all” with logit-based targeting using actual outcomes.</p>
+<p>That comparison is the most convincing result in the project:</p>
+<pre class="text"><code>Target All      profit ≈ 111,712.5 RMB   rome ≈ 0.031
+Logit Targeting profit ≈ 887,423.0 RMB   rome ≈ 0.566</code></pre>
+<p>So even after moving from the planning stage to realized rollout results, the selective targeting policy dramatically outperformed the naive strategy of contacting everyone.</p>
+<p>Two numbers summarize the difference:</p>
+<ul>
+<li>profit rose from roughly <code>112k RMB</code> to <code>887k RMB</code></li>
+<li>marketing return increased from about <code>3.1%</code> to <code>56.6%</code></li>
+</ul>
+<p>That is the kind of lift that makes a targeting model operationally worthwhile.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/tuango_profit_comparison.png" class="img-fluid figure-img"></p>
+<figcaption>Projected and realized campaign economics both favor selective targeting over sending the offer to everyone.</figcaption>
+</figure>
 </div>
-</div>
-<p>Cars with larger engines tend to have lower fuel efficiency, which is exactly the pattern we would expect from the plot. This page is intentionally simple, but it serves as a first example of how I want to present analysis on the site.</p>
+</section>
+<section id="my-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="my-interpretation">My Interpretation</h2>
+<p>What I like most about this case is that the final answer is not really “logistic regression works.” The more important conclusion is that <strong>a campaign model should be evaluated against decision economics, not only against statistical fit</strong>.</p>
+<p>In this case, three ideas mattered:</p>
+<ul>
+<li>customer targeting should reflect channel cost, not just response likelihood</li>
+<li>purchase probability was much more predictable than order size</li>
+<li>model deployment should be judged on realized profit, not only in-sample calibration</li>
+</ul>
+<p>If I were communicating this to a growth or CRM team, my recommendation would be clear: keep the mobile channel selective, use the model to filter the audience, and treat irrelevant messaging as a real cost because it degrades long-term customer contactability.</p>
+</section>
+<section id="why-this-belongs-in-my-portfolio" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-belongs-in-my-portfolio">Why This Belongs In My Portfolio</h2>
+<p>This project reflects the kind of analytics work I enjoy most: turning a real business constraint into a decision rule that improves profit. It sits at the intersection of marketing analytics, experimentation, customer targeting, and model interpretation.</p>
+<p>It also reflects an approach I want my portfolio to show consistently: not just building a model, but asking whether the model changes what the business should do.</p>
+</section>
+<section id="technical-notes" class="level2">
+<h2 class="anchored" data-anchor-id="technical-notes">Technical Notes</h2>
+<ul>
+<li>Tools: <code>Python</code>, <code>Polars</code>, <code>pyrsm</code>, <code>plotnine</code></li>
+<li>Methods: logistic regression, permutation importance, threshold optimization, rollout evaluation</li>
+</ul>
 
 
 </section>
@@ -624,7 +795,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>MGTA 495 portfolio built with Quarto</p>
+<p>Portfolio and analytics writing built with Quarto</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;
