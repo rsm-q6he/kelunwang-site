@@ -2,8 +2,9 @@
   {
     "listing": "/portfolio.html",
     "items": [
-      "/posts/intuit/index.html",
+      "/posts/hw2/index.html",
       "/posts/hw1/index.html",
+      "/posts/intuit/index.html",
       "/projects/creative-gaming-uplift/index.html",
       "/posts/tuango/index.html"
     ]
